@@ -1,7 +1,7 @@
-Insurance Contract & Claim Management System 
+Insurance Contract Lifecycle Management System 
 A comprehensive, single-page web application for managing insurance policies, claims, and related data. This dashboard provides a user-friendly interface with dynamic charts and approval workflows, designed for insurance professionals and managers.
 
-[Live Demo Link Here](https://andychu221.github.io/Insurance-Contract-Lifecycle-Management/)] 
+[Live Demo Link Here](https://andychu221.github.io/Insurance-Contract-Lifecycle-Management/)
 
 Features
 Interactive Dashboard: At-a-glance view of key metrics including active policies, total coverage, total premium, and year-to-date (YTD) claim statistics.
