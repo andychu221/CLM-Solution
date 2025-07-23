@@ -50,7 +50,7 @@ To run locally:
 
 Clone or download the repository.
 
-Open the index.html (or your named HTML file) directly in your web browser (e.g., Chrome, Firefox, Edge).
+Open the index.html directly in your web browser (e.g., Chrome, Firefox, Edge).
 
 That's it! The application will be fully functional in your browser.
 
