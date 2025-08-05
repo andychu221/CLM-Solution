@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,6 +56,52 @@
             background-color: #3b82f6;
             color: white;
         }
+        .claim-workflow {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 4px 0;
+        }
+        .workflow-step {
+            flex: 1;
+            height: 6px;
+            background-color: #e5e7eb; /* Default color */
+            border-radius: 3px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        .workflow-step.completed { background-color: #22c55e; } /* Green */
+        .workflow-step.current { background-color: #f59e0b; } /* Amber */
+        .workflow-step .step-tooltip {
+            visibility: hidden;
+            width: 120px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .workflow-step:hover .step-tooltip { visibility: visible; opacity: 1; }
+
+        #file-drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            color: #64748b;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        #file-drop-zone.dragover {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -67,27 +114,27 @@
             </div>
             <nav id="sidebar-nav" class="flex-1 p-4 space-y-2">
                 <a href="#" data-target="dashboard-view" class="nav-link flex items-center px-4 py-2 text-gray-700 bg-gray-200 rounded-lg">
-                    <i class="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
+                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l-3.75 0M20.25 13.5l3.75 0M12 3.75l0-3.75M12 20.25l0 3.75M5.093 5.093l-2.651-2.651M18.907 18.907l2.651 2.651M5.093 18.907l-2.651 2.651M18.907 5.093l2.651-2.651" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.635 15.635L21 21" /></svg>
                     <span data-i18n-key="nav_dashboard">Dashboard</span>
                 </a>
                 <a href="#" data-target="policies-view" class="nav-link flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-file-contract w-5 h-5 mr-3"></i>
+                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     <span data-i18n-key="nav_policies">Policy Management</span>
                 </a>
                  <a href="#" data-target="claims-view" class="nav-link flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-hand-holding-dollar w-5 h-5 mr-3"></i>
+                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-1.5l-2.625 2.625a3.375 3.375 0 01-4.773 0l-1.125-1.125a3.375 3.375 0 010-4.773l1.125-1.125a3.375 3.375 0 014.773 0l2.625 2.625m-4.5-1.5l4.5-4.5" /></svg>
                     <span data-i18n-key="nav_claims">Claims Management</span>
                 </a>
                 <a href="#" data-target="insurers-view" class="nav-link flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-building w-5 h-5 mr-3"></i>
+                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" /></svg>
                     <span data-i18n-key="nav_insurers">Insurance Companies</span>
                 </a>
                 <a href="#" data-target="users-view" class="nav-link flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-users-cog w-5 h-5 mr-3"></i>
+                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-2.305c.394-.434.394-1.135 0-1.569a9.337 9.337 0 00-4.121-2.305 9.38 9.38 0 00-2.625.372M15 19.128v-3.375c0-.621-.504-1.125-1.125-1.125h-3.75c-.621 0-1.125.504-1.125 1.125v3.375M15 19.128c-1.01.232-2.043.372-3.125.372s-2.115-.14-3.125-.372M4.875 14.628c-.394-.434-.394-1.135 0-1.569a9.337 9.337 0 014.121-2.305 9.38 9.38 0 012.625.372 9.337 9.337 0 014.121 2.305c.394.434.394 1.135 0 1.569a9.337 9.337 0 01-4.121 2.305 9.38 9.38 0 01-2.625-.372 9.337 9.337 0 01-4.121-2.305zM15 9.375a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     <span data-i18n-key="nav_users">User & Permissions</span>
                 </a>
                 <a href="#" data-target="logs-view" class="nav-link flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <i class="fas fa-history w-5 h-5 mr-3"></i>
+                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span data-i18n-key="nav_logs">Log Management</span>
                 </a>
             </nav>
@@ -103,7 +150,10 @@
 
         <!-- Main Content -->
         <main class="flex-1 flex flex-col">
-            <header class="bg-white shadow-sm p-4 flex justify-end items-center z-10">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center z-10">
+                <div class="flex-grow flex items-center space-x-4">
+                    <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key here" class="w-1/3 px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                </div>
                 <div id="language-switcher" class="text-sm space-x-4">
                     <a href="#" class="lang-link text-gray-600 hover:text-blue-600" data-lang="en">English</a>
                     <a href="#" class="lang-link text-gray-600 hover:text-blue-600" data-lang="zh-TW">繁體中文</a>
@@ -122,21 +172,13 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white p-6 rounded-lg shadow-sm">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 id="insurerChartTitle" class="font-semibold text-gray-600"></h3>
-                                <div id="insurerChartToggle" class="text-xs space-x-1 chart-toggle">
-                                    <button data-metric="coverage" class="px-3 py-1 rounded" data-i18n-key="btn_coverage"></button>
-                                    <button data-metric="premium" class="px-3 py-1 rounded" data-i18n-key="btn_premium"></button>
-                                </div>
+                                <h3 id="insurerChartTitle" class="font-semibold text-gray-600" data-i18n-key="chart_premium_by_insurer"></h3>
                             </div>
                             <div class="relative h-72"><canvas id="insurerChart"></canvas></div>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 id="typeChartTitle" class="font-semibold text-gray-600"></h3>
-                                <div id="typeChartToggle" class="text-xs space-x-1 chart-toggle">
-                                    <button data-metric="coverage" class="px-3 py-1 rounded" data-i18n-key="btn_coverage"></button>
-                                    <button data-metric="premium" class="px-3 py-1 rounded" data-i18n-key="btn_premium"></button>
-                                </div>
+                             <div class="flex justify-between items-center mb-4">
+                                <h3 id="typeChartTitle" class="font-semibold text-gray-600" data-i18n-key="chart_premium_by_type"></h3>
                             </div>
                             <div class="relative h-72"><canvas id="typeChart"></canvas></div>
                         </div>
@@ -194,12 +236,22 @@
                             </div>
                             <div class="flex items-center space-x-2">
                                 <button id="policyCustomizeColumnsBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-200 flex items-center text-sm">
-                                    <i class="fas fa-columns mr-2"></i><span data-i18n-key="btn_customize_columns"></span>
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                                    <span data-i18n-key="btn_customize_columns"></span>
+                                </button>
+                                <button id="importPoliciesBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200 flex items-center text-sm">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3v11.25" /></svg>
+                                    <span data-i18n-key="btn_import_excel"></span>
+                                </button>
+                                <button id="exportPoliciesBtn" class="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-200 flex items-center text-sm">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3 3m0 0l-3-3m-3 3V15" /></svg>
+                                    <span data-i18n-key="btn_export_excel"></span>
                                 </button>
                                 <button id="addPolicyBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center text-sm">
-                                    <i class="fas fa-plus mr-2"></i>
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                                     <span data-i18n-key="btn_new_policy">New Policy</span>
                                 </button>
+                                <input type="file" id="policy-excel-input" class="hidden" accept=".xlsx, .xls">
                             </div>
                         </div>
                     </div>
@@ -219,12 +271,22 @@
                             <input id="claimSearchInput" type="text" data-i18n-key="placeholder_search_claims" placeholder="Search claims..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                             <div class="flex items-center space-x-2">
                                 <button id="claimCustomizeColumnsBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-200 flex items-center text-sm">
-                                    <i class="fas fa-columns mr-2"></i><span data-i18n-key="btn_customize_columns"></span>
+                                     <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                                    <span data-i18n-key="btn_customize_columns"></span>
+                                </button>
+                                <button id="importClaimsBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200 flex items-center text-sm">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3v11.25" /></svg>
+                                    <span data-i18n-key="btn_import_excel"></span>
+                                </button>
+                                <button id="exportClaimsBtn" class="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition duration-200 flex items-center text-sm">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3 3m0 0l-3-3m-3 3V15" /></svg>
+                                    <span data-i18n-key="btn_export_excel"></span>
                                 </button>
                                 <button id="addClaimBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center text-sm">
-                                    <i class="fas fa-plus mr-2"></i>
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                                     <span data-i18n-key="btn_new_claim">New Claim</span>
                                 </button>
+                                <input type="file" id="claim-excel-input" class="hidden" accept=".xlsx, .xls">
                             </div>
                         </div>
                     </div>
@@ -243,7 +305,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <input id="insurerSearchInput" type="text" data-i18n-key="placeholder_search_insurers" placeholder="Search insurers..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                             <button id="addInsurerBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center text-sm">
-                                <i class="fas fa-plus mr-2"></i>
+                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                                 <span data-i18n-key="btn_new_insurer">New Insurer</span>
                             </button>
                         </div>
@@ -313,16 +375,30 @@
     <!-- Modals -->
     <!-- Add/Edit Policy Modal -->
     <div id="addEditPolicyModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-30">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-full overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-full overflow-y-auto">
             <form id="policyForm" class="w-full">
                 <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
                     <h3 id="policyModalTitle" class="text-xl font-semibold"></h3>
                     <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                       <i class="fas fa-times fa-lg"></i>
+                       <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
-                <div id="policyFormBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                    <!-- Policy fields will be dynamically loaded here -->
+                <div class="p-6 space-y-6">
+                    <div id="policyFormBody" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                        <!-- Policy fields will be dynamically loaded here -->
+                    </div>
+                    <div>
+                         <h4 class="font-semibold mb-2 text-gray-700" data-i18n-key="form_attached_file"></h4>
+                         <div id="file-drop-zone">
+                             <span data-i18n-key="form_drag_drop_file"></span>
+                             <input type="file" id="policy_file_input" class="hidden" accept="application/pdf,image/*">
+                         </div>
+                         <div id="file-preview-container" class="mt-4"></div>
+                         <button type="button" id="gemini-extract-btn" class="mt-2 bg-purple-600 text-white px-3 py-1.5 rounded-md hover:bg-purple-700 text-sm disabled:bg-gray-400" disabled>
+                            <span data-i18n-key="btn_extract_gemini"></span>
+                         </button>
+                         <small id="gemini-info" class="block text-gray-500 mt-1" data-i18n-key="gemini_api_key_info"></small>
+                    </div>
                 </div>
                 <div class="p-4 bg-gray-50 border-t flex justify-end space-x-2 sticky bottom-0">
                     <button type="button" class="close-modal-btn bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50" data-i18n-key="btn_cancel">Cancel</button>
@@ -339,7 +415,7 @@
                 <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
                     <h3 id="claimModalTitle" class="text-xl font-semibold"></h3>
                     <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                       <i class="fas fa-times fa-lg"></i>
+                       <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 <div id="claimFormBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -359,7 +435,7 @@
             <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
                 <h3 class="text-xl font-semibold" data-i18n-key="modal_policy_detail_title">Policy Details</h3>
                 <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                   <i class="fas fa-times fa-lg"></i>
+                   <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             <div id="policyDetailBody" class="p-6">
@@ -377,7 +453,7 @@
             <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
                 <h3 class="text-xl font-semibold" data-i18n-key="modal_claim_detail_title">Claim Details</h3>
                 <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                   <i class="fas fa-times fa-lg"></i>
+                   <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             <div id="claimDetailBody" class="p-6">
@@ -395,7 +471,7 @@
             <div class="p-4 border-b flex justify-between items-center">
                 <h3 id="pdfViewerTitle" class="text-xl font-semibold">PDF Preview</h3>
                 <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                   <i class="fas fa-times fa-lg"></i>
+                   <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             <div class="flex-1 p-4 overflow-hidden">
@@ -427,7 +503,7 @@
                 <div class="p-6 border-b flex justify-between items-center">
                     <h3 id="insurerModalTitle" class="text-xl font-semibold" data-i18n-key="modal_add_insurer_title">Add New Insurer</h3>
                     <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                       <i class="fas fa-times fa-lg"></i>
+                       <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
@@ -459,7 +535,7 @@
                 <div class="p-6 border-b flex justify-between items-center">
                     <h3 id="userModalTitle" class="text-xl font-semibold" data-i18n-key="modal_edit_user_title">Edit User</h3>
                     <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600">
-                       <i class="fas fa-times fa-lg"></i>
+                       <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
@@ -494,7 +570,7 @@
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-full overflow-y-auto">
             <div class="p-6 border-b flex justify-between items-center">
                 <h3 class="text-xl font-semibold" data-i18n-key="modal_customize_columns_title"></h3>
-                <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600"><i class="fas fa-times fa-lg"></i></button>
+                <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
             <div class="p-6">
                 <div id="columnCheckboxes" class="grid grid-cols-2 gap-4"></div>
@@ -510,12 +586,12 @@
         </div>
     </div>
     
-    <!-- Chart Detail Modal -->
+    <!-- Chart/Stat Detail Modal -->
     <div id="chartDetailModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-full overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-full overflow-y-auto">
             <div class="p-6 border-b flex justify-between items-center">
                 <h3 id="chartDetailModalTitle" class="text-xl font-semibold"></h3>
-                <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600"><i class="fas fa-times fa-lg"></i></button>
+                <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
             <div id="chartDetailModalBody" class="p-6"></div>
             <div class="p-4 bg-gray-50 border-t flex justify-end">
@@ -532,33 +608,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- I18n Data ---
     const i18n = {
         'en': {
-            'nav_dashboard': 'Dashboard', 'nav_policies': 'Policy Management', 'nav_claims': 'Claims Management', 'nav_users': 'User & Permissions', 'nav_logs': 'Log Management', 'currentUser': 'Current User', 'dashboard_title': 'Dashboard', 'action_items_title': 'Action Items (Risk Alerts)', 'table_priority': 'Priority', 'table_item': 'Item', 'table_related_policy': 'Related Policy', 'table_due_date': 'Due/Event Date', 'policy_management_title': 'Policy Management', 'placeholder_search_policies': 'Search policies...', 'btn_new_policy': 'New Policy', 'claims_management_title': 'Claims Management', 'placeholder_search_claims': 'Search claims...', 'table_claim_id': 'Claim ID', 'table_policy_id': 'Policy ID', 'table_claim_date': 'Claim Date', 'table_claimed_amount': 'Claimed Amount', 'table_status': 'Status', 'table_actions': 'Actions', 'user_management_title': 'User & Permissions Management', 'placeholder_search_users': 'Search users...', 'table_user_id': 'User ID', 'table_username': 'Username', 'table_role': 'Role', 'table_region': 'Assigned Region', 'modal_add_policy_title': 'Add New Policy', 'modal_edit_policy_title': 'Edit Policy', 'form_policy_id': 'Policy ID', 'btn_cancel': 'Cancel', 'btn_save': 'Save', 'alert_confirm_delete': 'Are you sure you want to delete this item?', 'label_switch_user': 'Switch User', 'btn_new_claim': 'New Claim', 'modal_add_claim_title': 'Submit New Claim', 'modal_edit_claim_title': 'Edit Claim', 'modal_claim_detail_title': 'Claim Details', 'form_claim_date': 'Claim Date', 'form_claimed_amount': 'Claimed Amount', 'form_currency': 'Currency', 'form_accident_type': 'Accident Type / Description', 'form_insurance_type': 'Insurance Type', 'form_entity': 'Legal Entity', 'form_insurer': 'Lead Insurer', 'form_coverage_amount': 'Coverage Amount', 'form_premium': 'Premium', 'form_deductible': 'Deductible', 'form_start_date': 'Start Date', 'form_end_date': 'End Date', 'form_status': 'Status', 'msg_no_action_items': 'No urgent action items.', 'btn_ok': 'OK', 'filter_all_entities': 'All Entities', 'filter_all_types': 'All Types', 'filter_all_statuses': 'All Statuses', 'status_active': 'Active', 'status_pending': 'Pending', 'status_expired': 'Expired', 'status_approved': 'Approved', 'status_rejected': 'Rejected', 'status_pending_approval': 'Pending Approval', 'status_settled': 'Settled', 'status_in_progress': 'In Progress', 'status_not_applicable': 'Not Applicable', 'status_paid': 'Paid', 'col_policy_id': 'Policy ID', 'col_type': 'Type', 'col_entity': 'Entity', 'col_primary_insurer': 'Lead Insurer', 'col_insured_amount': 'Insured Amount', 'col_premium': 'Premium', 'col_start_date': 'Start Date', 'col_due_date': 'Due Date', 'col_status': 'Status', 'col_actions': 'Actions', 'form_is_coinsurance': 'Is Co-insurance?', 'label_coinsurance_details': 'Co-insurance Details', 'btn_add_coinsurer': 'Add Co-insurer', 'form_coinsurer': 'Co-insurer', 'form_coinsurance_ratio': 'Ratio (%)', 'alert_coinsurance_ratio_sum_error': 'The sum of the co-insurers ratios must be less than 100%.', 'nav_insurers': 'Insurer Management', 'insurer_management_title': 'Insurer Management', 'placeholder_search_insurers': 'Search insurers...', 'btn_new_insurer': 'New Insurer', 'table_insurer_id': 'Insurer ID', 'table_insurer_name': 'Insurer Name', 'form_insurer_id': 'Insurer ID', 'form_insurer_name': 'Insurer Name', 'modal_add_insurer_title': 'Add New Insurer', 'modal_edit_insurer_title': 'Edit Insurer', 'alert_confirm_delete_insurer': 'Are you sure you want to delete this insurer?', 'modal_edit_user_title': 'Edit User', 'filter_all_insurers': 'All Insurers', 'log_management_title': 'Log Management', 'table_timestamp': 'Timestamp', 'table_user': 'User', 'table_action_log': 'Action', 'table_details': 'Details', 'approval_workflow_title': 'Approval Workflow', 'table_item_id': 'Item ID', 'table_type': 'Type', 'table_created_by': 'Created By', 'table_created_date': 'Created Date', 'btn_approve': 'Approve', 'btn_reject': 'Reject', 'msg_no_approval_items': 'No items awaiting your approval.', 'modal_policy_detail_title': 'Policy Details', 'btn_close': 'Close', 'form_attached_file': 'Attached File', 'form_location_of_loss': 'Location of Loss', 'form_incident_description': 'Incident Description', 'form_reporting_manager': 'Reporting Manager', 'form_payment_status': 'Payment Status', 'form_photo_evidence': 'Photo Evidence', 'table_location_of_loss': 'Location of Loss', 'table_payment_status': 'Payment Status',
-            'stat_active_policies': 'Active Policies', 'stat_total_coverage': 'Total Coverage', 'stat_total_premium': 'Total Premium', 'stat_ytd_claims': 'Claims (YTD)',
-            'chart_policy_by_region': 'Active Policies by Region', 'chart_coverage_by_insurer': 'Coverage by Insurer', 'chart_premium_by_insurer': 'Premium by Insurer', 'chart_coverage_by_type': 'Coverage by Policy Type', 'chart_premium_by_type': 'Premium by Policy Type', 'chart_claims_trend': 'Claims Time Series Trend', 'chart_policy_by_due_month': 'Policies by Due Month',
+            'nav_dashboard': 'Dashboard', 'nav_policies': 'Policy Management', 'nav_claims': 'Claims Management', 'nav_users': 'User & Permissions', 'nav_logs': 'Log Management', 'currentUser': 'Current User', 'dashboard_title': 'Dashboard', 'action_items_title': 'Action Items (Risk Alerts)', 'table_priority': 'Priority', 'table_item': 'Item', 'table_related_policy': 'Related Policy', 'table_due_date': 'Due/Event Date', 'policy_management_title': 'Policy Management', 'placeholder_search_policies': 'Search policies...', 'btn_new_policy': 'New Policy', 'claims_management_title': 'Claims Management', 'placeholder_search_claims': 'Search claims...', 'table_claim_id': 'Claim ID', 'table_policy_id': 'Policy ID', 'table_claim_date': 'Claim Date', 'table_claimed_amount': 'Claimed Amount', 'table_status': 'Status', 'table_actions': 'Actions', 'user_management_title': 'User & Permissions Management', 'placeholder_search_users': 'Search users...', 'table_user_id': 'User ID', 'table_username': 'Username', 'table_role': 'Role', 'table_region': 'Assigned Region', 'modal_add_policy_title': 'Add New Policy', 'modal_edit_policy_title': 'Edit Policy', 'form_policy_id': 'Policy ID', 'btn_cancel': 'Cancel', 'btn_save': 'Save', 'alert_confirm_delete': 'Are you sure you want to delete this item?', 'label_switch_user': 'Switch User', 'btn_new_claim': 'New Claim', 'modal_add_claim_title': 'Submit New Claim', 'modal_edit_claim_title': 'Edit Claim', 'modal_claim_detail_title': 'Claim Details', 'form_claim_date': 'Claim Date', 'form_claimed_amount': 'Claimed Amount', 'form_currency': 'Currency', 'form_accident_type': 'Accident Type / Description', 'form_insurance_type': 'Insurance Type', 'form_entity': 'Legal Entity', 'form_insurer': 'Lead Insurer', 'form_coverage_amount': 'Coverage Amount', 'form_premium': 'Premium', 'form_deductible': 'Deductible', 'form_start_date': 'Start Date', 'form_end_date': 'End Date', 'form_status': 'Status', 'msg_no_action_items': 'No urgent action items.', 'btn_ok': 'OK', 'filter_all_entities': 'All Entities', 'filter_all_types': 'All Types', 'filter_all_statuses': 'All Statuses', 'status_active': 'Active', 'status_pending': 'Pending', 'status_expired': 'Expired', 'status_approved': 'Approved', 'status_rejected': 'Rejected', 'status_pending_approval': 'Pending Approval', 'status_settled': 'Settled', 'status_in_progress': 'In Progress', 'status_not_applicable': 'Not Applicable', 'status_paid': 'Paid', 'col_policy_id': 'Policy ID', 'col_type': 'Type', 'col_entity': 'Entity', 'col_primary_insurer': 'Lead Insurer', 'col_insured_amount': 'Insured Amount', 'col_premium': 'Premium', 'col_start_date': 'Start Date', 'col_due_date': 'Due Date', 'col_status': 'Status', 'col_actions': 'Actions', 'form_is_coinsurance': 'Is Co-insurance?', 'label_coinsurance_details': 'Co-insurance Details', 'btn_add_coinsurer': 'Add Co-insurer', 'form_coinsurer': 'Co-insurer', 'form_coinsurance_ratio': 'Ratio (%)', 'alert_coinsurance_ratio_sum_error': 'The sum of the co-insurers ratios must be less than 100%.', 'nav_insurers': 'Insurer Management', 'insurer_management_title': 'Insurer Management', 'placeholder_search_insurers': 'Search insurers...', 'btn_new_insurer': 'New Insurer', 'table_insurer_id': 'Insurer ID', 'table_insurer_name': 'Insurer Name', 'form_insurer_id': 'Insurer ID', 'form_insurer_name': 'Insurer Name', 'modal_add_insurer_title': 'Add New Insurer', 'modal_edit_insurer_title': 'Edit Insurer', 'alert_confirm_delete_insurer': 'Are you sure you want to delete this insurer?', 'modal_edit_user_title': 'Edit User', 'filter_all_insurers': 'All Insurers', 'log_management_title': 'Log Management', 'table_timestamp': 'Timestamp', 'table_user': 'User', 'table_action_log': 'Action', 'table_details': 'Details', 'approval_workflow_title': 'Approval Workflow', 'table_item_id': 'Item ID', 'table_type': 'Type', 'table_created_by': 'Created By', 'table_created_date': 'Created Date', 'btn_approve': 'Approve', 'btn_reject': 'Reject', 'msg_no_approval_items': 'No items awaiting your approval.', 'modal_policy_detail_title': 'Policy Details', 'btn_close': 'Close', 'form_attached_file': 'Attached File / Preview', 'form_location_of_loss': 'Location of Loss', 'form_incident_description': 'Incident Description', 'form_reporting_manager': 'Reporting Manager', 'form_payment_status': 'Payment Status', 'form_photo_evidence': 'Photo Evidence', 'table_location_of_loss': 'Location of Loss', 'table_payment_status': 'Payment Status',
+            'stat_active_policies': 'Active Policies', 'stat_policies_due_90d': 'Policies Due (90d)', 'stat_total_premium': 'Total Premium', 'stat_ytd_claims': 'Claims (YTD)',
+            'chart_policy_by_region': 'Active Policies by Region', 'chart_premium_by_insurer': 'Premium by Insurer', 'chart_premium_by_type': 'Premium by Policy Type', 'chart_claims_trend': 'Claims Time Series Trend', 'chart_policy_by_due_month': 'Policies by Due Month',
             'form_insured_object': 'Insured Object', 'form_is_rider_to_fire': 'Is Rider to Fire Policy', 'form_earthquake_coverage': 'Earthquake Coverage', 'form_payment_terms': 'Payment Terms', 'form_equipment_id': 'Equipment ID / Name', 'form_maintenance_record_req': 'Maintenance Record Requirement', 'form_installation_site': 'Installation Site', 'form_waiting_period': 'Waiting Period', 'form_compensation_basis': 'Compensation Basis', 'form_daily_total_limit': 'Daily/Total Limit', 'form_transport_mode': 'Transport Mode', 'form_from_to_location': 'From / To Location', 'form_declaration_type': 'Declaration Type', 'form_packing_terms': 'Packing Terms', 'form_loading_unloading_terms': 'Loading/Unloading Terms', 'form_general_liability_scope': 'General Liability Scope', 'form_per_occurrence_limit': 'Per Occurrence Limit', 'form_aggregate_limit': 'Aggregate Limit', 'form_territorial_limit': 'Territorial Limit', 'form_product_liability_scope': 'Product Liability Scope', 'form_territorial_coverage': 'Territorial Coverage', 'form_retroactive_period': 'Retroactive Period', 'form_legal_defense_included': 'Legal Defense Included', 'form_employee_scope': 'Employee Scope', 'form_coverage_limits': 'Coverage Limits', 'form_overlap_labor_insurance': 'Overlap with Labor Insurance',
             'type_fire_insurance': 'Fire Insurance', 'type_earthquake_insurance': 'Earthquake Insurance', 'type_machinery_breakdown': 'Machinery Breakdown', 'type_business_interruption': 'Business Interruption', 'type_cargotransit_insurance': 'Cargo/Transit Insurance', 'type_public_liability': 'Public Liability', 'type_product_liability': 'Product Liability', 'type_employers_liability': 'Employer’s Liability',
             'btn_customize_columns': 'Customize Columns', 'modal_customize_columns_title': 'Customize Columns', 'label_column_order': 'Column Order (Drag to reorder)',
-            'modal_due_policies_title': 'Policies Due in', 'col_claim_id': 'Claim ID', 'col_claim_date': 'Claim Date', 'col_location_of_loss': 'Location of Loss', 'col_claimed_amount': 'Claimed Amount', 'col_payment_status': 'Payment Status', 'col_claim_status': 'Claim Status', 'btn_coverage': 'Coverage', 'btn_premium': 'Premium',
+            'modal_due_policies_title': 'Policies Due in', 'col_claim_id': 'Claim ID', 'col_claim_date': 'Claim Date', 'col_location_of_loss': 'Location of Loss', 'col_claimed_amount': 'Claimed Amount', 'col_payment_status': 'Payment Status', 'col_claim_status': 'Claim Status', 'btn_premium': 'Premium', 'btn_export_excel': 'Export Excel', 'btn_import_excel': 'Import Excel', 'excel_import_success': 'Excel file read successfully. Check console for data. Backend needed for DB update.', 'excel_import_error': 'Error reading Excel file.',
+            'form_drag_drop_file': 'Drag & drop a file here, or click to select a file', 'btn_extract_gemini': 'Extract with Gemini', 'gemini_api_key_info': 'Enter your API key at the top to enable.', 'gemini_extraction_sim': 'Simulating extraction... Populating fields with dummy data.', 'gemini_no_key': 'Error: Gemini API key is missing.',
+            'claim_workflow_title': 'Claim Workflow', 'workflow_step_submitted': 'Submitted', 'workflow_step_pending_approval': 'Pending Approval', 'workflow_step_in_progress': 'In Progress', 'workflow_step_settled': 'Settled', 'workflow_step_rejected': 'Rejected',
         },
         'zh-TW': {
-            'nav_dashboard': '儀表板', 'nav_policies': '保單管理', 'nav_claims': '理賠管理', 'nav_users': '使用者與權限', 'nav_logs': '日誌管理', 'currentUser': '目前使用者', 'dashboard_title': '儀表板', 'action_items_title': '待辦事項 (風險預警)', 'table_priority': '優先級', 'table_item': '項目', 'table_related_policy': '關聯保單', 'table_due_date': '到期/事件日', 'policy_management_title': '保單管理', 'placeholder_search_policies': '搜尋保單...', 'btn_new_policy': '新增保單', 'claims_management_title': '理賠管理', 'placeholder_search_claims': '搜尋理賠案件...', 'table_claim_id': '理賠單號', 'table_policy_id': '保單號碼', 'table_claim_date': '理賠申請日', 'table_claimed_amount': '申請金額', 'table_status': '狀態', 'table_actions': '操作', 'user_management_title': '使用者與權限管理', 'placeholder_search_users': '搜尋使用者...', 'table_user_id': '使用者ID', 'table_username': '使用者名稱', 'table_role': '角色', 'table_region': '負責區域', 'modal_add_policy_title': '新增保單', 'modal_edit_policy_title': '編輯保單', 'form_policy_id': '保單號碼', 'btn_cancel': '取消', 'btn_save': '儲存', 'alert_confirm_delete': '您確定要刪除此項目嗎？', 'label_switch_user': '切換使用者', 'btn_new_claim': '新增理賠', 'modal_add_claim_title': '提交新理賠', 'modal_edit_claim_title': '編輯理賠', 'modal_claim_detail_title': '理賠詳情', 'form_claim_date': '理賠申請日', 'form_claimed_amount': '申請金額', 'form_currency': '幣別', 'form_accident_type': '事故類型/描述', 'form_insurance_type': '險種類型', 'form_entity': '法人實體', 'form_insurer': '首席保險公司', 'form_coverage_amount': '保額', 'form_premium': '保費', 'form_deductible': '自負額', 'form_start_date': '起始日期', 'form_end_date': '結束日期', 'form_status': '狀態', 'msg_no_action_items': '沒有緊急待辦事項。', 'btn_ok': '確定', 'filter_all_entities': '所有實體', 'filter_all_types': '所有險種', 'filter_all_statuses': '所有狀態', 'status_active': '生效中', 'status_pending': '待處理', 'status_expired': '已到期', 'status_approved': '已簽核', 'status_rejected': '已拒絕', 'status_pending_approval': '待簽核', 'status_settled': '已結案', 'status_in_progress': '處理中', 'status_not_applicable': '不適用', 'status_paid': '已支付', 'col_policy_id': '保單號碼', 'col_type': '險種', 'col_entity': '實體', 'col_primary_insurer': '首席保險人', 'col_insured_amount': '保額', 'col_premium': '保費', 'col_start_date': '起始日期', 'col_due_date': '到期日期', 'col_status': '狀態', 'col_actions': '操作', 'form_is_coinsurance': '是否為共保？', 'label_coinsurance_details': '共保細節', 'btn_add_coinsurer': '新增共保人', 'form_coinsurer': '共保人', 'form_coinsurance_ratio': '比例 (%)', 'alert_coinsurance_ratio_sum_error': '共保公司的比例總和必須小於 100%。', 'nav_insurers': '保險公司管理', 'insurer_management_title': '保險人管理', 'placeholder_search_insurers': '搜尋保險公司...', 'btn_new_insurer': '新增保險公司', 'table_insurer_id': '保險公司ID', 'table_insurer_name': '保險公司名稱', 'form_insurer_id': '保險公司ID', 'form_insurer_name': '保險公司名稱', 'modal_add_insurer_title': '新增保險公司', 'modal_edit_insurer_title': '編輯保險公司', 'alert_confirm_delete_insurer': '您確定要刪除這家保險公司嗎？', 'modal_edit_user_title': '編輯使用者', 'filter_all_insurers': '所有保險公司', 'log_management_title': '日誌管理', 'table_timestamp': '時間戳', 'table_user': '使用者', 'table_action_log': '操作', 'table_details': '詳細資訊', 'approval_workflow_title': '簽核流程', 'table_item_id': '項目單號', 'table_type': '類型', 'table_created_by': '建立者', 'table_created_date': '建立日期', 'btn_approve': '同意', 'btn_reject': '拒絕', 'msg_no_approval_items': '沒有待您簽核的項目。', 'modal_policy_detail_title': '保單詳情', 'btn_close': '關閉', 'form_attached_file': '附件', 'form_location_of_loss': '損失地點', 'form_incident_description': '事故描述', 'form_reporting_manager': '通報主管', 'form_payment_status': '賠款狀態', 'form_photo_evidence': '照片證據', 'table_location_of_loss': '損失地點', 'table_payment_status': '賠款狀態',
-            'stat_active_policies': '有效保單', 'stat_total_coverage': '總保額', 'stat_total_premium': '總保費', 'stat_ytd_claims': '理賠 (本年)',
-            'chart_policy_by_region': '各地區有效保單數量', 'chart_coverage_by_insurer': '依保險公司統計保額', 'chart_premium_by_insurer': '依保險公司統計保費', 'chart_coverage_by_type': '各險種保額分佈', 'chart_premium_by_type': '各險種保費分佈', 'chart_claims_trend': '理賠趨勢圖', 'chart_policy_by_due_month': '保單到期月份分佈',
+            'nav_dashboard': '儀表板', 'nav_policies': '保單管理', 'nav_claims': '理賠管理', 'nav_users': '使用者與權限', 'nav_logs': '日誌管理', 'currentUser': '目前使用者', 'dashboard_title': '儀表板', 'action_items_title': '待辦事項 (風險預警)', 'table_priority': '優先級', 'table_item': '項目', 'table_related_policy': '關聯保單', 'table_due_date': '到期/事件日', 'policy_management_title': '保單管理', 'placeholder_search_policies': '搜尋保單...', 'btn_new_policy': '新增保單', 'claims_management_title': '理賠管理', 'placeholder_search_claims': '搜尋理賠案件...', 'table_claim_id': '理賠單號', 'table_policy_id': '保單號碼', 'table_claim_date': '理賠申請日', 'table_claimed_amount': '申請金額', 'table_status': '狀態', 'table_actions': '操作', 'user_management_title': '使用者與權限管理', 'placeholder_search_users': '搜尋使用者...', 'table_user_id': '使用者ID', 'table_username': '使用者名稱', 'table_role': '角色', 'table_region': '負責區域', 'modal_add_policy_title': '新增保單', 'modal_edit_policy_title': '編輯保單', 'form_policy_id': '保單號碼', 'btn_cancel': '取消', 'btn_save': '儲存', 'alert_confirm_delete': '您確定要刪除此項目嗎？', 'label_switch_user': '切換使用者', 'btn_new_claim': '新增理賠', 'modal_add_claim_title': '提交新理賠', 'modal_edit_claim_title': '編輯理賠', 'modal_claim_detail_title': '理賠詳情', 'form_claim_date': '理賠申請日', 'form_claimed_amount': '申請金額', 'form_currency': '幣別', 'form_accident_type': '事故類型/描述', 'form_insurance_type': '險種類型', 'form_entity': '法人實體', 'form_insurer': '首席保險公司', 'form_coverage_amount': '保額', 'form_premium': '保費', 'form_deductible': '自負額', 'form_start_date': '起始日期', 'form_end_date': '結束日期', 'form_status': '狀態', 'msg_no_action_items': '沒有緊急待辦事項。', 'btn_ok': '確定', 'filter_all_entities': '所有實體', 'filter_all_types': '所有險種', 'filter_all_statuses': '所有狀態', 'status_active': '生效中', 'status_pending': '待處理', 'status_expired': '已到期', 'status_approved': '已簽核', 'status_rejected': '已拒絕', 'status_pending_approval': '待簽核', 'status_settled': '已結案', 'status_in_progress': '處理中', 'status_not_applicable': '不適用', 'status_paid': '已支付', 'col_policy_id': '保單號碼', 'col_type': '險種', 'col_entity': '實體', 'col_primary_insurer': '首席保險人', 'col_insured_amount': '保額', 'col_premium': '保費', 'col_start_date': '起始日期', 'col_due_date': '到期日期', 'col_status': '狀態', 'col_actions': '操作', 'form_is_coinsurance': '是否為共保？', 'label_coinsurance_details': '共保細節', 'btn_add_coinsurer': '新增共保人', 'form_coinsurer': '共保人', 'form_coinsurance_ratio': '比例 (%)', 'alert_coinsurance_ratio_sum_error': '共保公司的比例總和必須小於 100%。', 'nav_insurers': '保險公司管理', 'insurer_management_title': '保險人管理', 'placeholder_search_insurers': '搜尋保險公司...', 'btn_new_insurer': '新增保險公司', 'table_insurer_id': '保險公司ID', 'table_insurer_name': '保險公司名稱', 'form_insurer_id': '保險公司ID', 'form_insurer_name': '保險公司名稱', 'modal_add_insurer_title': '新增保險公司', 'modal_edit_insurer_title': '編輯保險公司', 'alert_confirm_delete_insurer': '您確定要刪除這家保險公司嗎？', 'modal_edit_user_title': '編輯使用者', 'filter_all_insurers': '所有保險公司', 'log_management_title': '日誌管理', 'table_timestamp': '時間戳', 'table_user': '使用者', 'table_action_log': '操作', 'table_details': '詳細資訊', 'approval_workflow_title': '簽核流程', 'table_item_id': '項目單號', 'table_type': '類型', 'table_created_by': '建立者', 'table_created_date': '建立日期', 'btn_approve': '同意', 'btn_reject': '拒絕', 'msg_no_approval_items': '沒有待您簽核的項目。', 'modal_policy_detail_title': '保單詳情', 'btn_close': '關閉', 'form_attached_file': '附件/預覽', 'form_location_of_loss': '損失地點', 'form_incident_description': '事故描述', 'form_reporting_manager': '通報主管', 'form_payment_status': '賠款狀態', 'form_photo_evidence': '照片證據', 'table_location_of_loss': '損失地點', 'table_payment_status': '賠款狀態',
+            'stat_active_policies': '有效保單', 'stat_policies_due_90d': '即將到期保單(90天)', 'stat_total_premium': '總保費', 'stat_ytd_claims': '理賠 (本年)',
+            'chart_policy_by_region': '各地區有效保單數量', 'chart_premium_by_insurer': '依保險公司統計保費', 'chart_premium_by_type': '各險種保費分佈', 'chart_claims_trend': '理賠趨勢圖', 'chart_policy_by_due_month': '保單到期月份分佈',
             'form_insured_object': '保險標的', 'form_is_rider_to_fire': '是否為附加條款', 'form_earthquake_coverage': '地震附加保額', 'form_payment_terms': '給付條件', 'form_equipment_id': '設備名稱/編號', 'form_maintenance_record_req': '維修紀錄要求', 'form_installation_site': '裝設地點', 'form_waiting_period': '等待期間', 'form_compensation_basis': '賠償方式', 'form_daily_total_limit': '最高日額與總額限制', 'form_transport_mode': '運輸方式', 'form_from_to_location': '起訖地點', 'form_declaration_type': '投保方式', 'form_packing_terms': '包裝要求', 'form_loading_unloading_terms': '裝卸條件與風險轉移時點', 'form_general_liability_scope': '一般責任範圍', 'form_per_occurrence_limit': '每次事故限額', 'form_aggregate_limit': '年度總額限額', 'form_territorial_limit': '承保區域', 'form_product_liability_scope': '產品責任範圍', 'form_territorial_coverage': '地區範圍', 'form_retroactive_period': '回溯期間', 'form_legal_defense_included': '法律訴訟責任支援', 'form_employee_scope': '員工適用範圍', 'form_coverage_limits': '保額限制', 'form_overlap_labor_insurance': '是否重疊勞保補償',
             'type_fire_insurance': '火災保險', 'type_earthquake_insurance': '地震保險', 'type_machinery_breakdown': '機械險', 'type_business_interruption': '營業中斷險', 'type_cargotransit_insurance': '貨物運輸險', 'type_public_liability': '公共意外責任險', 'type_product_liability': '產品責任險', 'type_employers_liability': '雇主責任險',
             'btn_customize_columns': '自訂欄位', 'modal_customize_columns_title': '自訂欄位', 'label_column_order': '欄位排序 (拖曳)',
-            'modal_due_policies_title': '於...到期的保單', 'col_claim_id': '理賠單號', 'col_claim_date': '理賠日', 'col_location_of_loss': '損失地點', 'col_claimed_amount': '申請金額', 'col_payment_status': '賠款狀態', 'col_claim_status': '理賠狀態', 'btn_coverage': '保額', 'btn_premium': '保費',
+            'modal_due_policies_title': '於...到期的保單', 'col_claim_id': '理賠單號', 'col_claim_date': '理賠日', 'col_location_of_loss': '損失地點', 'col_claimed_amount': '申請金額', 'col_payment_status': '賠款狀態', 'col_claim_status': '理賠狀態', 'btn_premium': '保費', 'btn_export_excel': '匯出Excel', 'btn_import_excel': '匯入Excel', 'excel_import_success': 'Excel檔案讀取成功。請查看控制台中的數據。資料庫更新需要後端支持。', 'excel_import_error': '讀取Excel檔案時發生錯誤。',
+            'form_drag_drop_file': '將檔案拖放到此處，或點擊選擇檔案', 'btn_extract_gemini': '使用Gemini擷取', 'gemini_api_key_info': '請在頁首輸入您的API金鑰以啟用此功能。', 'gemini_extraction_sim': '模擬擷取中...將使用虛擬資料填入欄位。', 'gemini_no_key': '錯誤：缺少Gemini API金鑰。',
+            'claim_workflow_title': '理賠流程追蹤', 'workflow_step_submitted': '已提交', 'workflow_step_pending_approval': '待簽核', 'workflow_step_in_progress': '處理中', 'workflow_step_settled': '已結案', 'workflow_step_rejected': '已拒絕',
         },
         'ja': {
             'nav_dashboard': 'ダッシュボード', 'nav_policies': '保険契約管理', 'nav_claims': '保険金請求管理', 'nav_users': 'ユーザーと権限', 'nav_logs': 'ログ管理', 'currentUser': '現在のユーザー', 'dashboard_title': 'ダッシュボード', 'action_items_title': 'アクションアイテム（リスク警告）', 'table_priority': '優先度', 'table_item': '項目', 'table_related_policy': '関連契約', 'table_due_date': '期日/イベント日', 'policy_management_title': '保険契約管理', 'placeholder_search_policies': '保険契約を検索...', 'btn_new_policy': '新規契約', 'claims_management_title': '保険金請求管理', 'placeholder_search_claims': '保険金請求を検索...', 'table_claim_id': '請求ID', 'table_policy_id': '契約ID', 'table_claim_date': '請求日', 'table_claimed_amount': '請求額', 'table_status': 'ステータス', 'table_actions': '操作', 'user_management_title': 'ユーザーと権限管理', 'placeholder_search_users': 'ユーザーを検索...', 'table_user_id': 'ユーザーID', 'table_username': 'ユーザー名', 'table_role': '役割', 'table_region': '担当地域', 'modal_add_policy_title': '新規契約追加', 'modal_edit_policy_title': '契約を編集', 'form_policy_id': '契約番号', 'btn_cancel': 'キャンセル', 'btn_save': '保存', 'alert_confirm_delete': 'この項目を削除してもよろしいですか？', 'label_switch_user': 'ユーザー切り替え', 'btn_new_claim': '新規請求', 'modal_add_claim_title': '新規保険金請求の提出', 'modal_edit_claim_title': '請求を編集', 'modal_claim_detail_title': '請求詳細', 'form_claim_date': '請求日', 'form_claimed_amount': '請求額', 'form_currency': '通貨', 'form_accident_type': '事故の種類/説明', 'form_insurance_type': '保険種類', 'form_entity': '法人', 'form_insurer': '主幹事保険会社', 'form_coverage_amount': '保険金額', 'form_premium': '保険料', 'form_deductible': '免責金額', 'form_start_date': '開始日', 'form_end_date': '終了日', 'form_status': 'ステータス', 'msg_no_action_items': '緊急のアクションアイテムはありません。', 'btn_ok': 'OK', 'filter_all_entities': 'すべてのエンティティ', 'filter_all_types': 'すべての種類', 'filter_all_statuses': 'すべてのステータス', 'status_active': '有効', 'status_pending': '保留中', 'status_expired': '期限切れ', 'status_approved': '承認済み', 'status_rejected': '拒否済み', 'status_pending_approval': '承認待ち', 'status_settled': '解決済み', 'status_in_progress': '処理中', 'status_not_applicable': '該当なし', 'status_paid': '支払済み', 'col_policy_id': '保険契約ID', 'col_type': '種類', 'col_entity': 'エンティティ', 'col_primary_insurer': '主幹事保険会社', 'col_insured_amount': '保険金額', 'col_premium': '保険料', 'col_start_date': '開始日', 'col_due_date': '期日', 'col_status': 'ステータス', 'col_actions': '操作', 'form_is_coinsurance': '共同保険ですか？', 'label_coinsurance_details': '共同保険の詳細', 'btn_add_coinsurer': '共同保険会社を追加', 'form_coinsurer': '共同保険会社', 'form_coinsurance_ratio': '比率 (%)',
             'alert_coinsurance_ratio_sum_error': '共同保険会社の比率の合計は100%未満でなければなりません。',
-            'nav_insurers': '保険会社管理', 'insurer_management_title': '保険会社管理', 'placeholder_search_insurers': '保険会社を検索...', 'btn_new_insurer': '新規保険会社', 'table_insurer_id': '保険会社ID', 'table_insurer_name': '保険会社名', 'form_insurer_id': '保険会社ID', 'form_insurer_name': '保険会社名', 'modal_add_insurer_title': '新規保険会社追加', 'modal_edit_insurer_title': '保険会社を編集', 'alert_confirm_delete_insurer': 'この保険会社を削除してもよろしいですか？', 'modal_edit_user_title': 'ユーザーを編集', 'filter_all_insurers': 'すべての保険会社', 'log_management_title': 'ログ管理', 'table_timestamp': 'タイムスタンプ', 'table_user': 'ユーザー', 'table_action_log': 'アクション', 'table_details': '詳細', 'approval_workflow_title': '承認ワークフロー', 'table_item_id': 'アイテムID', 'table_type': 'タイプ', 'table_created_by': '作成者', 'table_created_date': '作成日', 'btn_approve': '承認', 'btn_reject': '拒否', 'msg_no_approval_items': '承認待ちのアイテムはありません。', 'modal_policy_detail_title': '保険契約詳細', 'btn_close': '閉じる', 'form_attached_file': '添付ファイル', 'form_location_of_loss': '損害発生場所', 'form_incident_description': '事故内容', 'form_reporting_manager': '報告責任者', 'form_payment_status': '支払状況', 'form_photo_evidence': '証拠写真', 'table_location_of_loss': '損害発生場所', 'table_payment_status': '支払状況',
-            'stat_active_policies': '有効な契約', 'stat_total_coverage': '総補償額', 'stat_total_premium': '総保険料', 'stat_ytd_claims': '保険金請求 (今年)',
-            'chart_policy_by_region': '地域別の有効な契約', 'chart_coverage_by_insurer': '保険会社別補償額', 'chart_premium_by_insurer': '保険会社別保険料', 'chart_coverage_by_type': '保険種類別補償額', 'chart_premium_by_type': '保険種類別保険料', 'chart_claims_trend': '保険金請求時系列トレンド', 'chart_policy_by_due_month': '満期月別契約数',
+            'nav_insurers': '保険会社管理', 'insurer_management_title': '保険会社管理', 'placeholder_search_insurers': '保険会社を検索...', 'btn_new_insurer': '新規保険会社', 'table_insurer_id': '保険会社ID', 'table_insurer_name': '保険会社名', 'form_insurer_id': '保険会社ID', 'form_insurer_name': '保険会社名', 'modal_add_insurer_title': '新規保険会社追加', 'modal_edit_insurer_title': '保険会社を編集', 'alert_confirm_delete_insurer': 'この保険会社を削除してもよろしいですか？', 'modal_edit_user_title': 'ユーザーを編集', 'filter_all_insurers': 'すべての保険会社', 'log_management_title': 'ログ管理', 'table_timestamp': 'タイムスタンプ', 'table_user': 'ユーザー', 'table_action_log': 'アクション', 'table_details': '詳細', 'approval_workflow_title': '承認ワークフロー', 'table_item_id': 'アイテムID', 'table_type': 'タイプ', 'table_created_by': '作成者', 'table_created_date': '作成日', 'btn_approve': '承認', 'btn_reject': '拒否', 'msg_no_approval_items': '承認待ちのアイテムはありません。', 'modal_policy_detail_title': '保険契約詳細', 'btn_close': '閉じる', 'form_attached_file': '添付ファイル/プレビュー', 'form_location_of_loss': '損害発生場所', 'form_incident_description': '事故内容', 'form_reporting_manager': '報告責任者', 'form_payment_status': '支払状況', 'form_photo_evidence': '証拠写真', 'table_location_of_loss': '損害発生場所', 'table_payment_status': '支払状況',
+            'stat_active_policies': '有効な契約', 'stat_policies_due_90d': '満期契約(90日)', 'stat_total_premium': '総保険料', 'stat_ytd_claims': '保険金請求 (今年)',
+            'chart_policy_by_region': '地域別の有効な契約', 'chart_premium_by_insurer': '保険会社別保険料', 'chart_premium_by_type': '保険種類別保険料', 'chart_claims_trend': '保険金請求時系列トレンド', 'chart_policy_by_due_month': '満期月別契約数',
             'form_insured_object': '保険対象', 'form_is_rider_to_fire': '火災保険の特約', 'form_earthquake_coverage': '地震保険の補償額', 'form_payment_terms': '支払条件', 'form_equipment_id': '設備名/ID', 'form_maintenance_record_req': 'メンテナンス記録要件', 'form_installation_site': '設置場所', 'form_waiting_period': '待機期間', 'form_compensation_basis': '補償基準', 'form_daily_total_limit': '日額/総額上限', 'form_transport_mode': '輸送モード', 'form_from_to_location': '出発地 / 到着地', 'form_declaration_type': '申告タイプ', 'form_packing_terms': '梱包条件', 'form_loading_unloading_terms': '荷役条件', 'form_general_liability_scope': '一般賠償責任範囲', 'form_per_occurrence_limit': '1事故あたりの限度額', 'form_aggregate_limit': '年間総額限度額', 'form_territorial_limit': '地域制限', 'form_product_liability_scope': '製品賠償責任範囲', 'form_territorial_coverage': '地域範囲', 'form_retroactive_period': '遡及期間', 'form_legal_defense_included': '法的弁護のサポート', 'form_employee_scope': '従業員適用範囲', 'form_coverage_limits': '補償限度額', 'form_overlap_labor_insurance': '労働保険との重複',
             'type_fire_insurance': '火災保険', 'type_earthquake_insurance': '地震保険', 'type_machinery_breakdown': '機械保険', 'type_business_interruption': '休業保険', 'type_cargotransit_insurance': '貨物海上保険', 'type_public_liability': '賠償責任保険', 'type_product_liability': '生産物賠償責任保険', 'type_employers_liability': '使用者賠償責任保険',
             'btn_customize_columns': '列のカスタマイズ', 'modal_customize_columns_title': '列のカスタマイズ', 'label_column_order': '列の順序 (ドラッグ)',
-            'modal_due_policies_title': '...に満期を迎える契約', 'col_claim_id': '請求ID', 'col_claim_date': '請求日', 'col_location_of_loss': '損害発生場所', 'col_claimed_amount': '請求額', 'col_payment_status': '支払状況', 'col_claim_status': '請求ステータス', 'btn_coverage': '補償額', 'btn_premium': '保険料',
+            'modal_due_policies_title': '...に満期を迎える契約', 'col_claim_id': '請求ID', 'col_claim_date': '請求日', 'col_location_of_loss': '損害発生場所', 'col_claimed_amount': '請求額', 'col_payment_status': '支払状況', 'col_claim_status': '請求ステータス', 'btn_premium': '保険料', 'btn_export_excel': 'Excelエクスポート', 'btn_import_excel': 'Excelインポート', 'excel_import_success': 'Excelファイルの読み取りに成功しました。コンソールでデータを確認してください。DB更新にはバックエンドが必要です。', 'excel_import_error': 'Excelファイルの読み取り中にエラーが発生しました。',
+            'form_drag_drop_file': 'ここにファイルをドラッグ＆ドロップするか、クリックしてファイルを選択します', 'btn_extract_gemini': 'Geminiで抽出', 'gemini_api_key_info': '有効にするには、上部にAPIキーを入力してください。', 'gemini_extraction_sim': '抽出をシミュレートしています...フィールドにダミーデータを入力します。', 'gemini_no_key': 'エラー：Gemini APIキーがありません。',
+            'claim_workflow_title': '請求ワークフロー', 'workflow_step_submitted': '提出済み', 'workflow_step_pending_approval': '承認待ち', 'workflow_step_in_progress': '処理中', 'workflow_step_settled': '解決済み', 'workflow_step_rejected': '拒否済み',
         }
     };
     
@@ -586,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { entity_id: 'TW-Entity-A', entity_name: 'Taiwan HQ Corp.', country_code: 'TW' },
         { entity_id: 'EU-Entity-A', entity_name: 'Europe Distribution GmbH', country_code: 'DE' },
     ];
+    const claimWorkflowSteps = ['Submitted', 'Pending Approval', 'In Progress', 'Settled', 'Rejected'];
 
     const generateMockData = () => {
         let users = [ { user_id: 'U001', username: 'Admin (HQ)', role_id: 1, assigned_region: 'HQ' } ];
@@ -684,6 +767,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(status === 'Active' && Math.random() > 0.4) {
                          const claimCreator = Math.random() > 0.5 ? manager : user;
                          const claimApprovalStatus = ['Approved', 'Pending Approval', 'Rejected'][Math.floor(Math.random() * 3)];
+                         let claimStatus = 'Pending';
+                         if (claimApprovalStatus === 'Approved') {
+                             claimStatus = ['Settled', 'In Progress', 'Rejected'][Math.floor(Math.random()*3)];
+                         } else if (claimApprovalStatus === 'Rejected') {
+                            claimStatus = 'Rejected';
+                         }
                          const claimDate = new Date(startDate.getTime() + Math.random() * (new Date().getTime() - startDate.getTime()));
                          claims.push({
                             claim_id: `C${claimDate.getFullYear()}-${String(claims.length+1).padStart(4,'0')}`,
@@ -691,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             claim_date: claimDate.toISOString().split('T')[0],
                             claimed_amount: Math.floor(Math.random() * policy.premium * 2),
                             currency_code: policy.currency_code,
-                            status: claimApprovalStatus === 'Approved' ? ['Settled', 'In Progress', 'Rejected'][Math.floor(Math.random()*3)] : 'Pending',
+                            status: claimStatus,
                             approval_status: claimApprovalStatus,
                             created_by: claimCreator.user_id,
                             created_date: claimDate.toISOString().split('T')[0],
@@ -700,7 +789,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             incident_description: `Incident related to ${type.name} operation. Assessment required.`,
                             reporting_manager: manager.username,
                             payment_status: ['Paid', 'Pending', 'Not Applicable'][Math.floor(Math.random()*3)],
-                            photo_evidence: `claim_photo_${claims.length + 1}.jpg`
+                            photo_evidence: `claim_photo_${claims.length + 1}.jpg`,
+                            workflow_current_step: claimApprovalStatus === 'Pending Approval' ? 'Pending Approval' : claimStatus,
                         });
                     }
                 }
@@ -716,8 +806,6 @@ document.addEventListener('DOMContentLoaded', () => {
         roles: [ { role_id: 1, role_name: 'HQ' }, { role_id: 2, role_name: 'RegionAdmin' }, { role_id: 3, role_name: 'User' } ],
         legalEntities, insurers, insuranceTypes,
         auditLogs: [], charts: {},
-        insurerChartMetric: 'coverage',
-        typeChartMetric: 'coverage',
         policyTableColumns: [
             { key: 'policy_id', labelKey: 'col_policy_id', sortable: true, visible: true },
             { key: 'insurance_type_id', labelKey: 'col_type', sortable: true, visible: true, formatter: (id) => state.insuranceTypes.find(t => t.id === id)?.name || 'N/A' },
@@ -735,10 +823,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'claim_id', labelKey: 'col_claim_id', sortable: true, visible: true },
             { key: 'policy_id', labelKey: 'table_policy_id', sortable: true, visible: true },
             { key: 'claim_date', labelKey: 'col_claim_date', sortable: true, visible: true },
-            { key: 'location_of_loss', labelKey: 'col_location_of_loss', sortable: true, visible: true },
             { key: 'claimed_amount', labelKey: 'col_claimed_amount', sortable: true, visible: true, formatter: (amount, claim) => `${amount.toLocaleString()} ${claim.currency_code}` },
-            { key: 'payment_status', labelKey: 'col_payment_status', sortable: true, visible: true, formatter: (status) => getStatusBadge(status) },
             { key: 'status', labelKey: 'col_claim_status', sortable: true, visible: true, formatter: (status, claim) => getStatusBadge(claim.approval_status !== 'Approved' ? claim.approval_status : claim.status) },
+            { key: 'workflow', labelKey: 'claim_workflow_title', sortable: false, visible: true, formatter: (claim) => claimsControls.renderWorkflowTracker(claim) },
         ],
         policySort: { key: 'policy_id', direction: 'asc' },
         claimSort: { key: 'claim_id', direction: 'asc' },
@@ -904,13 +991,20 @@ document.addEventListener('DOMContentLoaded', () => {
             this.renderRegionStats(policies);
             this.renderApprovalItems(policies, claims);
             this.initAllCharts(policies, claims);
-            this.setupChartToggles();
             translateUI();
         },
         renderStatCards(policies, claims) {
             const approvedPolicies = policies.filter(p => p.approval_status === 'Approved');
             const activePolicies = approvedPolicies.filter(p => p.status === 'Active');
-            const totalCoverage = activePolicies.reduce((sum, p) => sum + p.coverage_amount, 0);
+            
+            const now = new Date();
+            const ninetyDaysFromNow = new Date();
+            ninetyDaysFromNow.setDate(now.getDate() + 90);
+            const policiesDueIn90Days = activePolicies.filter(p => {
+                const endDate = new Date(p.end_date);
+                return endDate >= now && endDate <= ninetyDaysFromNow;
+            });
+
             const totalPremium = activePolicies.reduce((sum, p) => sum + p.premium, 0);
             
             const currentYear = new Date().getFullYear();
@@ -929,11 +1023,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if(statCardContainer) {
                 statCardContainer.innerHTML = `
                     <div class="bg-white p-6 rounded-lg shadow-sm"><p class="text-sm text-gray-500" data-i18n-key="stat_active_policies"></p><p class="text-2xl font-bold">${activePolicies.length}</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm"><p class="text-sm text-gray-500" data-i18n-key="stat_total_coverage"></p><p class="text-2xl font-bold">${formatCurrency(totalCoverage)}</p></div>
+                    <div id="policies-due-card" class="bg-white p-6 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"><p class="text-sm text-gray-500" data-i18n-key="stat_policies_due_90d"></p><p class="text-2xl font-bold">${policiesDueIn90Days.length}</p></div>
                     <div class="bg-white p-6 rounded-lg shadow-sm"><p class="text-sm text-gray-500" data-i18n-key="stat_total_premium"></p><p class="text-2xl font-bold">${formatCurrency(totalPremium)}</p></div>
                     <div class="bg-white p-6 rounded-lg shadow-sm"><p class="text-sm text-gray-500" data-i18n-key="stat_ytd_claims"></p><p class="text-2xl font-bold">${formatCurrency(ytdClaimsAmount)} / ${ytdClaimsCount}</p></div>
                 `;
+                document.getElementById('policies-due-card').addEventListener('click', () => {
+                    this.showDuePoliciesModal(policiesDueIn90Days);
+                });
             }
+        },
+        showDuePoliciesModal(policies) {
+            const sortedPolicies = [...policies].sort((a, b) => new Date(a.end_date) - new Date(b.end_date));
+            const headers = ['Policy ID', 'Type', 'Entity', 'Due Date'];
+            const rows = sortedPolicies.map(p => [ 
+                p.policy_id, 
+                state.insuranceTypes.find(t => t.id === p.insurance_type_id).name,
+                state.legalEntities.find(e => e.entity_id === p.entity_id).entity_name,
+                p.end_date
+            ]);
+            this.showChartDetailModal(i18n[currentLanguage]['stat_policies_due_90d'], headers, rows);
         },
         renderRegionStats(policies) {
             const container = document.getElementById('regionStatsContainer');
@@ -945,12 +1053,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const entity = state.legalEntities.find(e => e.entity_id === p.entity_id);
                 const region = entity ? (['US', 'JP', 'CN', 'TW'].includes(entity.country_code) ? entity.country_code : 'EU') : 'Unknown';
                 
-                // 初始化該地區的物件（如果尚未存在）
                 if (!acc[region]) {
                     acc[region] = { count: 0, coverage: 0, premium: 0 };
                 }
 
-                // 累加數量、保額和保費
                 acc[region].count++;
                 acc[region].coverage += p.coverage_amount;
                 acc[region].premium += p.premium;
@@ -958,7 +1064,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return acc;
             }, {});
             
-            // 格式化數字以便顯示 (e.g., 1M, 1.2B)
             const formatCompactNumber = (num) => {
                 if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + 'B';
                 if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
@@ -966,13 +1071,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return num.toString();
             };
 
-            // 生成新的 HTML，包含 Count / Coverage / Premium
             container.innerHTML = Object.entries(regionData).map(([region, data]) => `
                 <div class="bg-white p-4 rounded-lg shadow-sm text-center">
                     <p class="text-base font-bold text-gray-700">${region}</p>
                     <p class="text-2xl font-bold text-blue-600">${data.count}</p>
                     <div class="text-xs text-gray-500 mt-2">
-                        <span>C: ${formatCompactNumber(data.coverage)}</span> / 
                         <span>P: ${formatCompactNumber(data.premium)}</span>
                     </div>
                 </div>
@@ -1030,11 +1133,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (item) {
                 item.approval_status = action;
                 item.approved_by = currentUser.user_id;
-                if (action === 'Approved' && type === 'policy') {
-                    item.status = new Date() > new Date(item.end_date) ? 'Expired' : 'Active';
+                if (type === 'policy') {
+                    item.status = action === 'Approved' ? (new Date() > new Date(item.end_date) ? 'Expired' : 'Active') : 'Rejected';
                 }
-                if (action === 'Approved' && type === 'claim') {
-                    item.status = 'In Progress';
+                if (type === 'claim') {
+                    item.status = action === 'Approved' ? 'In Progress' : 'Rejected';
+                    item.workflow_current_step = action === 'Approved' ? 'In Progress' : 'Rejected';
                 }
                 logAction(`${action} ${type}`, `${type} ID: ${id}`);
                 renderAllActiveViews();
@@ -1044,10 +1148,8 @@ document.addEventListener('DOMContentLoaded', () => {
             palette: ['#3b82f6', '#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#8b5cf6', '#ec4899']
         },
         initAllCharts(policies, claims) {
-            const { insurerChartMetric, typeChartMetric } = state;
-            
-            document.getElementById('insurerChartTitle').dataset.i18nKey = `chart_${insurerChartMetric}_by_insurer`;
-            document.getElementById('typeChartTitle').dataset.i18nKey = `chart_${typeChartMetric}_by_type`;
+            document.getElementById('insurerChartTitle').dataset.i18nKey = `chart_premium_by_insurer`;
+            document.getElementById('typeChartTitle').dataset.i18nKey = `chart_premium_by_type`;
 
             const chartOptions = {
                 pieDoughnut: {
@@ -1097,12 +1199,9 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         getInsurerData: (policies) => {
             const activePolicies = policies.filter(p => p.status === 'Active' && p.approval_status === 'Approved');
-            const metric = state.insurerChartMetric; // 'coverage' or 'premium'
-            const dataKey = metric === 'coverage' ? 'coverage_amount' : 'premium';
-            
             const insurerData = activePolicies.reduce((acc, p) => {
                 const insurerName = state.insurers.find(i => i.insurer_id === p.insurer_id)?.name || 'Unknown';
-                acc[insurerName] = (acc[insurerName] || 0) + p[dataKey];
+                acc[insurerName] = (acc[insurerName] || 0) + p.premium;
                 return acc;
             }, {});
 
@@ -1113,12 +1212,9 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         getPolicyTypeData: (policies) => {
             const activePolicies = policies.filter(p => p.status === 'Active' && p.approval_status === 'Approved');
-            const metric = state.typeChartMetric; // 'coverage' or 'premium'
-            const dataKey = metric === 'coverage' ? 'coverage_amount' : 'premium';
-
             const typeData = activePolicies.reduce((acc, p) => {
                 const typeName = state.insuranceTypes.find(t => t.id === p.insurance_type_id)?.name || 'Unknown';
-                acc[typeName] = (acc[typeName] || 0) + p[dataKey];
+                acc[typeName] = (acc[typeName] || 0) + p.premium;
                 return acc;
             }, {});
             return {
@@ -1160,29 +1256,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: monthLabels,
                 datasets: [{ label: 'Policies Due', data: Object.values(dueData), backgroundColor: '#ffce56' }]
             };
-        },
-        setupChartToggles() {
-            const insurerToggle = document.getElementById('insurerChartToggle');
-            const typeToggle = document.getElementById('typeChartToggle');
-
-            const handleToggle = (e, stateKey, toggleElement) => {
-                const metric = e.target.dataset.metric;
-                if (!metric) return;
-                state[stateKey] = metric;
-                toggleElement.querySelectorAll('button').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.metric === metric);
-                    btn.classList.toggle('bg-gray-200', btn.dataset.metric !== metric);
-                });
-                const { policies, claims } = getFilteredData();
-                this.initAllCharts(policies, claims);
-            };
-
-            insurerToggle.addEventListener('click', (e) => handleToggle(e, 'insurerChartMetric', insurerToggle));
-            typeToggle.addEventListener('click', (e) => handleToggle(e, 'typeChartMetric', typeToggle));
-
-            // Initial state
-            insurerToggle.querySelector(`button[data-metric="${state.insurerChartMetric}"]`).classList.add('active');
-            typeToggle.querySelector(`button[data-metric="${state.typeChartMetric}"]`).classList.add('active');
         },
         handleChartClick(event) {
             const chart = event.chart;
@@ -1246,7 +1319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Policy & Claim Shared Controls ---
+    // --- Table & Excel Controls ---
     const tableControls = {
         showCustomizeColumnsModal(configKey, renderCallback) {
             const modal = document.getElementById('customizeColumnsModal');
@@ -1258,7 +1331,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const updateSortableList = () => {
                 sortableColumns.innerHTML = config.filter(c => c.visible).map(c => 
                     `<li data-key="${c.key}" class="p-2 bg-white border rounded cursor-grab flex justify-between items-center">
-                        <span data-i18n-key="${c.labelKey}"></span><i class="fas fa-bars text-gray-400"></i>
+                        <span data-i18n-key="${c.labelKey}"></span>
+                        <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
                     </li>`
                 ).join('');
                 translateUI();
@@ -1294,7 +1368,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const saveBtn = document.getElementById('saveCustomColumnsBtn');
-            const newSaveBtn = saveBtn.cloneNode(true); // To remove old listeners
+            const newSaveBtn = saveBtn.cloneNode(true); 
             saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
             newSaveBtn.addEventListener('click', () => {
                 const dataKey = configKey.includes('policy') ? 'policies' : 'claims';
@@ -1316,6 +1390,76 @@ document.addEventListener('DOMContentLoaded', () => {
                 return sortConfig.direction === 'asc' ? (valA || 0) - (valB || 0) : (valB || 0) - (valA || 0);
             });
         },
+        exportToExcel(data, filename, type) {
+            let excelData = [];
+            if(type === 'policies') {
+                excelData = data.map(p => {
+                    const policyExport = {
+                        'Policy ID': p.policy_id,
+                        'Insurance Type': state.insuranceTypes.find(t => t.id === p.insurance_type_id)?.name,
+                        'Legal Entity': state.legalEntities.find(e => e.entity_id === p.entity_id)?.entity_name,
+                        'Lead Insurer': state.insurers.find(i => i.insurer_id === p.insurer_id)?.name,
+                        'Coverage Amount': p.coverage_amount,
+                        'Premium': p.premium,
+                        'Deductible': p.deductible,
+                        'Currency': p.currency_code,
+                        'Start Date': p.start_date,
+                        'End Date': p.end_date,
+                        'Status': p.status,
+                        'Approval Status': p.approval_status,
+                        'Is Co-insurance': p.is_coinsurance ? 'Yes' : 'No'
+                    };
+                    if (p.is_coinsurance && p.coinsurers) {
+                        p.coinsurers.forEach((ci, index) => {
+                            policyExport[`Co-insurer ${index+1}`] = state.insurers.find(i => i.insurer_id === ci.insurer_id)?.name;
+                            policyExport[`Co-insurer Ratio ${index+1}`] = ci.ratio;
+                        });
+                    }
+                    return policyExport;
+                });
+            } else if (type === 'claims') {
+                 excelData = data.map(c => ({
+                    'Claim ID': c.claim_id,
+                    'Policy ID': c.policy_id,
+                    'Claim Date': c.claim_date,
+                    'Claimed Amount': c.claimed_amount,
+                    'Currency': c.currency_code,
+                    'Status': c.status,
+                    'Approval Status': c.approval_status,
+                    'Location of Loss': c.location_of_loss,
+                    'Payment Status': c.payment_status
+                }));
+            }
+
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, type);
+            XLSX.writeFile(workbook, `${filename}.xlsx`);
+            logAction(`Exported ${type} to Excel`);
+        },
+        handleExcelImport(e, type) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
+                    console.log(`Imported ${type} data:`, json);
+                    showCustomConfirm(i18n[currentLanguage].excel_import_success, () => {}, 'Success');
+                    logAction(`Simulated import of ${type} from Excel`);
+                } catch (error) {
+                    console.error('Excel import error:', error);
+                    showCustomConfirm(i18n[currentLanguage].excel_import_error, () => {}, 'Error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            e.target.value = ''; // Reset input
+        }
     };
 
     // --- Policy Management Controls ---
@@ -1328,6 +1472,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ['policyFilterEntity', 'policyFilterType', 'policyFilterStatus', 'policyFilterInsurer'].forEach(id => {
                 document.getElementById(id)?.addEventListener('change', () => this.renderTable(getFilteredData().policies));
             });
+            document.getElementById('exportPoliciesBtn').addEventListener('click', () => {
+                const filteredData = this.applyFilters(getFilteredData().policies);
+                tableControls.exportToExcel(filteredData, 'policies_export', 'policies');
+            });
+            document.getElementById('importPoliciesBtn').addEventListener('click', () => document.getElementById('policy-excel-input').click());
+            document.getElementById('policy-excel-input').addEventListener('change', (e) => tableControls.handleExcelImport(e, 'policies'));
+            this.initFileUpload();
             translateUI();
         },
         applyFilters(policies) {
@@ -1382,7 +1533,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         return `<td class="px-6 py-4">${content || 'N/A'}</td>`;
                     }).join('')}
                     <td class="px-6 py-4">
-                        <button data-id="${p.policy_id}" class="edit-policy-btn text-yellow-600 hover:text-yellow-800 mr-2" title="Edit" ${!isEditable ? 'disabled' : ''}><i class="fas fa-edit ${!isEditable ? 'text-gray-400' : ''}"></i></button>
+                        <button data-id="${p.policy_id}" class="edit-policy-btn text-yellow-600 hover:text-yellow-800 mr-2" title="Edit" ${!isEditable ? 'disabled' : ''}>
+                            <svg class="w-5 h-5 ${!isEditable ? 'text-gray-400' : ''}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                        </button>
                     </td>
                 </tr>`;
             }).join('');
@@ -1506,6 +1659,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!formBody) return;
             const isEditMode = policy !== null;
             document.getElementById('policyModalTitle').dataset.i18nKey = isEditMode ? 'modal_edit_policy_title' : 'modal_add_policy_title';
+            document.getElementById('file-preview-container').innerHTML = ''; // Clear previous preview
+            document.getElementById('gemini-extract-btn').disabled = true;
             
             const createField = (labelKey, id, type = 'text', options = [], required = true, value = '', readonly = false) => {
                 const inputHtml = type === 'select' ? `<select id="${id}" name="${id}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm" ${required ? 'required' : ''}>${options.map(o => `<option value="${o.value}" ${o.value == value ? 'selected' : ''}>${o.text}</option>`).join('')}</select>` : `<input type="${type}" id="${id}" name="${id}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm ${readonly ? 'bg-gray-100' : ''}" ${required ? 'required' : ''} value="${value}" ${readonly ? 'readonly' : ''}>`;
@@ -1655,6 +1810,75 @@ document.addEventListener('DOMContentLoaded', () => {
             hideModal(document.getElementById('addEditPolicyModal'));
             renderAllActiveViews();
         },
+        initFileUpload() {
+            const dropZone = document.getElementById('file-drop-zone');
+            const fileInput = document.getElementById('policy_file_input');
+            const previewContainer = document.getElementById('file-preview-container');
+            const geminiBtn = document.getElementById('gemini-extract-btn');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFile(fileInput.files[0]);
+                }
+            });
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) {
+                    handleFile(fileInput.files[0]);
+                }
+            });
+
+            const handleFile = (file) => {
+                previewContainer.innerHTML = '';
+                geminiBtn.disabled = false;
+                let previewEl;
+                if (file.type.startsWith('image/')) {
+                    previewEl = document.createElement('img');
+                    previewEl.className = 'max-w-xs max-h-40 rounded-lg shadow-md';
+                    const reader = new FileReader();
+                    reader.onload = (e) => previewEl.src = e.target.result;
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                     previewEl = document.createElement('iframe');
+                     previewEl.className = 'w-full h-40 rounded-lg shadow-md';
+                     previewEl.src = URL.createObjectURL(file);
+                } else {
+                    previewEl = document.createElement('p');
+                    previewEl.textContent = `File: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                }
+                previewContainer.appendChild(previewEl);
+            };
+
+            geminiBtn.addEventListener('click', () => {
+                const apiKey = document.getElementById('gemini-api-key').value;
+                const policyForm = document.getElementById('policyForm');
+                if (!apiKey) {
+                    showCustomConfirm(i18n[currentLanguage].gemini_no_key, () => {}, 'Error');
+                    return;
+                }
+                showCustomConfirm(i18n[currentLanguage].gemini_extraction_sim, () => {
+                    // This is a simulation. A real implementation would make an API call here.
+                    policyForm.coverage_amount.value = Math.floor(Math.random() * 500000) + 100000;
+                    policyForm.premium.value = Math.floor(Math.random() * 5000) + 1000;
+                    policyForm.deductible.value = Math.floor(Math.random() * 1000) + 500;
+                    const startDate = new Date();
+                    const endDate = new Date();
+                    endDate.setFullYear(startDate.getFullYear() + 1);
+                    endDate.setDate(endDate.getDate() - 1);
+                    policyForm.start_date.value = startDate.toISOString().split('T')[0];
+                    policyForm.end_date.value = endDate.toISOString().split('T')[0];
+                    logAction('Simulated Gemini Extraction');
+                }, 'Info');
+            });
+        }
     };
 
     // --- Claims Management Controls ---
@@ -1664,6 +1888,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('claimSearchInput').addEventListener('input', () => this.renderTable(getFilteredData().claims));
             document.getElementById('claimForm').addEventListener('submit', (e) => this.handleFormSubmit(e));
             document.getElementById('claimCustomizeColumnsBtn').addEventListener('click', () => tableControls.showCustomizeColumnsModal('claimsTableColumns', (d) => this.renderTable(d)));
+            document.getElementById('exportClaimsBtn').addEventListener('click', () => {
+                const searchTerm = document.getElementById('claimSearchInput').value.toLowerCase();
+                const filteredClaims = getFilteredData().claims.filter(c => c.claim_id.toLowerCase().includes(searchTerm) || c.policy_id.toLowerCase().includes(searchTerm));
+                tableControls.exportToExcel(filteredClaims, 'claims_export', 'claims');
+            });
+            document.getElementById('importClaimsBtn').addEventListener('click', () => document.getElementById('claim-excel-input').click());
+            document.getElementById('claim-excel-input').addEventListener('change', (e) => tableControls.handleExcelImport(e, 'claims'));
         },
         renderTable(claims) {
             const tableHead = document.getElementById('claimsTableHead');
@@ -1672,9 +1903,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const visibleColumns = state.claimsTableColumns.filter(c => c.visible);
             tableHead.innerHTML = `<tr>${visibleColumns.map(c => 
-                `<th scope="col" class="px-6 py-3 cursor-pointer" data-key="${c.key}">
+                `<th scope="col" class="px-6 py-3 ${c.sortable ? 'cursor-pointer' : ''}" ${c.sortable ? `data-key="${c.key}"` : ''}>
                     <span data-i18n-key="${c.labelKey}"></span>
-                    ${state.claimSort.key === c.key ? (state.claimSort.direction === 'asc' ? '▲' : '▼') : ''}
+                    ${c.sortable && state.claimSort.key === c.key ? (state.claimSort.direction === 'asc' ? '▲' : '▼') : ''}
                 </th>`
             ).join('')}<th scope="col" class="px-6 py-3"><span data-i18n-key="col_actions"></span></th></tr>`;
 
@@ -1686,12 +1917,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isEditable = c.approval_status !== 'Approved';
                 return `<tr class="bg-white border-b hover:bg-gray-50">
                     ${visibleColumns.map(col => {
-                        const val = col.formatter ? col.formatter(c[col.key], c) : c[col.key];
+                        const val = col.key === 'workflow' ? col.formatter(c) : (col.formatter ? col.formatter(c[col.key], c) : c[col.key]);
                         const content = col.key === 'claim_id' ? `<a href="#" data-id="${c.claim_id}" class="view-claim-details-btn text-blue-600 hover:text-blue-800 font-bold">${val}</a>` : val;
                         return `<td class="px-6 py-4">${content || 'N/A'}</td>`;
                     }).join('')}
                     <td class="px-6 py-4">
-                        <button data-id="${c.claim_id}" class="edit-claim-btn text-yellow-600 hover:text-yellow-800" title="Edit" ${!isEditable ? 'disabled' : ''}><i class="fas fa-edit ${!isEditable ? 'text-gray-400' : ''}"></i></button>
+                        <button data-id="${c.claim_id}" class="edit-claim-btn text-yellow-600 hover:text-yellow-800" title="Edit" ${!isEditable ? 'disabled' : ''}>
+                           <svg class="w-5 h-5 ${!isEditable ? 'text-gray-400' : ''}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                        </button>
                     </td>
                 </tr>`
             }).join('');
@@ -1714,6 +1947,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 this.showClaimDetailsModal(state.claims.find(c => c.claim_id === e.currentTarget.dataset.id));
             }));
+        },
+        renderWorkflowTracker(claim) {
+            const steps = ['Submitted', 'Pending Approval', 'In Progress'];
+            const finalStep = claim.status === 'Rejected' ? 'Rejected' : 'Settled';
+            steps.push(finalStep);
+
+            const currentStepIndex = steps.indexOf(claim.workflow_current_step);
+            
+            return `<div class="claim-workflow">${steps.map((step, index) => {
+                let statusClass = '';
+                if (currentStepIndex >= 0) {
+                    if (index < currentStepIndex) {
+                        statusClass = 'completed';
+                    } else if (index === currentStepIndex) {
+                        statusClass = 'current';
+                    }
+                }
+                const i18nKey = `workflow_step_${step.replace(/\s+/g, '_').toLowerCase()}`;
+                const tooltipText = i18n[currentLanguage][i18nKey] || step;
+
+                return `<div class="workflow-step ${statusClass}">
+                            <span class="step-tooltip">${tooltipText}</span>
+                        </div>`;
+            }).join('')}</div>`;
         },
         showClaimDetailsModal(claim) {
             if (!claim) return;
@@ -1744,6 +2001,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${claim.photo_evidence ? `<p class="mt-2"><strong>${i18n[currentLanguage]['form_photo_evidence']}:</strong> <a href="#" data-file="${claim.photo_evidence}" class="view-pdf-btn text-blue-600 hover:underline">${claim.photo_evidence}</a></p>` : ''}
                     </div>
                 </div>
+                 <div class="bg-white p-4 rounded-lg border md:col-span-2 mt-4">
+                     <h4 class="font-bold mb-2" data-i18n-key="claim_workflow_title"></h4>
+                     ${this.renderWorkflowTracker(claim)}
+                 </div>
             `;
             showModal(document.getElementById('claimDetailModal'));
             translateUI();
@@ -1766,7 +2027,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(p => p.approval_status === 'Approved' && p.status === 'Active')
                 .map(p => {
                     const type = state.insuranceTypes.find(t => t.id === p.insurance_type_id);
-                    const typeName = type ? type.name : 'Unknown Type';
+                    const typeName = type ? (i18n[currentLanguage][`type_${type.name.toLowerCase().replace(/[\s/]+/g, '_')}`] || type.name) : 'Unknown Type';
                     const selected = claim?.policy_id === p.policy_id ? 'selected' : '';
                     return `<option value="${p.policy_id}" ${selected}>${p.policy_id} (${typeName})</option>`;
                 }).join('');
@@ -1809,7 +2070,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>
                     <label for="payment_status" class="block text-sm font-medium text-gray-700" data-i18n-key="form_payment_status"></label>
                     <select id="payment_status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm" required>
-                        ${['Pending', 'Paid', 'Not Applicable'].map(s => `<option value="${s}" ${claim?.payment_status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                        ${['Pending', 'Paid', 'Not Applicable'].map(s => `<option value="${s}" ${claim?.payment_status === s ? 'selected' : ''}>${i18n[currentLanguage]['status_' + s.replace(/\s+/g, '_').toLowerCase()] || s}</option>`).join('')}
                     </select>
                 </div>
                  <div class="md:col-span-2">
@@ -1849,7 +2110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 claim_date: form.claim_date.value,
                 claimed_amount: parseFloat(form.claim_amount.value) || 0,
                 currency_code: form.claim_currency.value,
+                status: 'Submitted',
                 approval_status: 'Pending Approval',
+                workflow_current_step: 'Pending Approval',
                 location_of_loss: form.location_of_loss.value,
                 incident_description: form.incident_description.value,
                 reporting_manager: form.reporting_manager.value,
@@ -1893,7 +2156,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="px-6 py-4 font-medium">${i.name}</td>
                     <td class="px-6 py-4">${i.region}</td>
                     <td class="px-6 py-4">
-                        <button data-id="${i.insurer_id}" class="edit-insurer-btn text-yellow-600 hover:text-yellow-800 mr-2" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button data-id="${i.insurer_id}" class="edit-insurer-btn text-yellow-600 hover:text-yellow-800 mr-2" title="Edit">
+                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                        </button>
                     </td>
                 </tr>`).join('');
             tableBody.querySelectorAll('.edit-insurer-btn').forEach(btn => btn.addEventListener('click', (e) => this.showAddEditModal(state.insurers.find(i => i.insurer_id === e.currentTarget.dataset.id))));
@@ -1946,7 +2211,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td class="px-6 py-4 font-medium">${u.username}</td>
                         <td class="px-6 py-4">${role?.role_name || 'N/A'}</td>
                         <td class="px-6 py-4">${u.assigned_region}</td>
-                        <td class="px-6 py-4"><button data-id="${u.user_id}" class="edit-user-btn text-yellow-600 hover:text-yellow-800" title="Edit"><i class="fas fa-edit"></i></button></td>
+                        <td class="px-6 py-4">
+                            <button data-id="${u.user_id}" class="edit-user-btn text-yellow-600 hover:text-yellow-800" title="Edit">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                            </button>
+                        </td>
                     </tr>`;
             }).join('');
             tableBody.querySelectorAll('.edit-user-btn').forEach(btn => btn.addEventListener('click', (e) => this.showEditUserModal(state.users.find(u => u.user_id === e.currentTarget.dataset.id))));
@@ -2035,3 +2304,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
